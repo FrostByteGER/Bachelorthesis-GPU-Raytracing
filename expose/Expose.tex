@@ -1,0 +1,610 @@
+\documentclass[11pt]{scrartcl}
+
+%---------------------------------
+% Sprache, Schriften, Zeichensatz
+%---------------------------------
+\usepackage[ngerman]{babel}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{csquotes}	% für babel
+
+%---------------------------------
+% Datum/Zeit
+%---------------------------------
+\usepackage[ngerman]{datetime}
+
+\newdateformat{germandate}{\THEDAY. \monthname[\THEMONTH] \THEYEAR}
+
+%---------------------------------
+% BibLaTeX: Online-Quellen
+%---------------------------------
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+% sorting=none -> keine Sortierung, Standard ist alphabetisch
+
+% TexMaker-Kommando für bib(la)tex: "biber" %
+% (Original-Einstellung für bibtex: "bibtex" %.aux
+
+\addbibresource{ExposeQuellen.bib}
+
+%---------------------------------
+% Meta Variables
+%---------------------------------
+\newcommand{\MetaInstitute}{Hochschule Bremen}
+\newcommand{\MetaUnit}{Fakultät 4 -- Elektrotechnik und Informatik}
+\newcommand{\MetaTitle}{Anwendung von Hardware-Raytracing zur Optimierung der Treffererkennung}
+\newcommand{\MetaSubtitle}{Eine Untersuchung zur Leistungssteigerung und Präzisionsverbesserung in Echtzeit-Anwendungen}
+\newcommand{\MetaTask}{Exposé}
+\newcommand{\MetaAuthorName}{Kevin}
+\newcommand{\MetaAuthorSurname}{Kügler}
+\newcommand{\MetaAuthor}{\MetaAuthorName~\MetaAuthorSurname}
+\newcommand{\MetaStudentNumber}{\textit{399027}}
+\newcommand{\MetaStudyProgram}{Internationaler Studiengang Medieninformatik (B.Sc.)}
+%\newcommand{\MetaCoAuthor}{mit Helmut Eirund}
+\newcommand{\MetaDate}{\germandate\today}
+%\newcommand{\MetaDate}{5.\ September 2018}
+\newcommand{\MetaVersion}{1.00}
+
+%---------------------------------
+% Content Variables
+%---------------------------------
+%\newcommand{\ecslong}{Entity-Component-System}
+%\newcommand{\ecsshort}{ECS}
+%\newcommand{\goclong}{Gameobject-Component}
+%\newcommand{\gocshort}{GoC}
+%\newcommand{\coi}{Composition over inheritance}
+%---------------------------------
+% Querverweise
+%---------------------------------
+% Hyperref (sollte unbedingt vor geometry-Paket geladen werden)
+% für Anzeige in Acrobat (pdfstartview)
+\usepackage[bookmarks=false,
+pdfstartview=FitV,
+pdfhighlight={/I},
+colorlinks = true,
+linkcolor = blue,
+urlcolor  = blue,
+citecolor = blue,
+pdfborder={0 0 0},
+german]{hyperref}
+
+\hypersetup{
+	pdfauthor   = {\MetaAuthor},
+	pdftitle    = {\MetaTitle},
+	% pdfsubject  = {\MetaUnit, \MetaTask},
+	pdfsubject  = {\MetaTask},
+	pdfkeywords = {\MetaTitle, \MetaUnit, \MetaInstitute},
+	% pdfkeywords = {\MetaTitle, \MetaUnit, \MetaTask, \MetaInstitute},
+}
+
+% Für Verweise mit Angabe des Typs des referenzierten Objekts (z.B. "Kapitel")
+\usepackage[ngerman]{cleveref}
+
+\crefname{section}{Kapitel}{Kapitel}	% Anpassung der Typbezeichnungen
+\crefname{subsection}{Abschnitt}{Abschnitte}
+\crefname{lstlisting}{Listing}{Listing} % neue Typbezeichnung
+
+
+%---------------------------------
+% Grafiken, Farben
+%---------------------------------
+\usepackage{graphicx}
+\graphicspath{ {figures/} }
+
+\usepackage{xcolor}
+
+\definecolor{keyword}{HTML}{0000FF}	% Farben für Listings
+\definecolor{string}{HTML}{D12F1B}
+\definecolor{comment}{HTML}{008400}
+\definecolor{lightgrey}{rgb}{0.99,0.99,0.99}
+
+\definecolor{note}{rgb}{1,1,0.8}		% Farbe für Notizen
+
+
+%---------------------------------
+% Seitenlayout: Abmessungen
+%---------------------------------
+% Option für zusätzlichen Rand zum Binden: bindingoffset
+% Default-Verhältnis von oberem (innerem) zu unterem (äußerem) Rand: 2:3
+%\usepackage[top=3.6cm,bottom=4.50cm,left=2.3cm,bindingoffset=0.5cm, pdftex,twoside,a4paper]{geometry}
+\usepackage[top=3.6cm,bottom=4.50cm,left=2.3cm,bindingoffset=0.5cm, pdftex,a4paper]{geometry}
+
+\setlength{\parindent}{6mm} 
+\setlength{\parskip}{0.2cm} 
+
+
+% Raum für Notizen mit note-Paket
+%\usepackage[top=3.6cm,bottom=4.5cm,right=4cm,bindingoffset=0.5cm,twoside]{geometry}
+
+% "includemp" zieht Notizbereich (marginpar) von Druckbereich ab:
+%\usepackage[top=3.6cm,bottom=4.50cm,left=2.3cm,bindingoffset=0.5cm,marginparwidth=3cm, includemp, pdftex,twoside,a4paper]{geometry}
+
+%---------------------------------
+% Seitenlayout: Kopf- und Fußzeilen
+%---------------------------------
+\usepackage[headsepline]{scrlayer-scrpage}
+
+\clearpairofpagestyles
+\automark[section]{section}	% Anzeige der "section" in der Kopfzeile
+\lohead{\headmark}
+\cofoot[\pagemark]{\pagemark} % Anzeige der Seitenzahl in der Fußzeile
+\pagestyle{scrheadings}
+
+%\pagestyle{empty}
+
+
+%---------------------------------
+% Seitenlayout: Überschriften
+%---------------------------------
+\addtokomafont{subsubsection}{\normalfont\sffamily}	% subsubsection nicht bold
+\addtokomafont{paragraph}{\normalfont\sffamily}	% paragraph nicht bold
+
+
+%---------------------------------
+% Enumeration mit Zahlen auf allen Ebenen (für Gliederung)
+%---------------------------------
+\usepackage{enumitem}
+
+\newlist{gliederung}{enumerate}{4}
+\setlist[gliederung]{label*=\arabic*.}
+
+
+%---------------------------------
+% Listings
+%---------------------------------
+\usepackage{listings}
+
+\lstset{
+	language=Python,
+	basicstyle=\ttfamily,
+	showstringspaces=false, % lets spaces in strings appear as real spaces
+	columns=fixed,
+	keepspaces=true,
+	keywordstyle=\color{keyword},
+	stringstyle=\color{string},
+	commentstyle=\color{comment},
+	frame=tb,	% Rahmen = single
+	%  framerule=1pt,
+	showstringspaces=false,
+	basicstyle=\footnotesize\ttfamily,
+	backgroundcolor=\color{lightgrey},
+	numbers=left
+}
+
+
+%---------------------------------
+% To Do Notes
+%---------------------------------
+\usepackage[textwidth=3.5cm, backgroundcolor=note]{todonotes}
+
+
+%---------------------------------
+% Tabellen
+%---------------------------------
+\usepackage{multirow}
+%usepackage{array}
+\usepackage{makecell}
+\usepackage{booktabs}	% http://ctan.org/pkg/booktabs
+
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+
+
+%---------------------------------
+% Floating environments genauer positionieren
+%---------------------------------
+\usepackage{float}
+
+%---------------------------------
+% Wasserzeichen
+%---------------------------------
+%\usepackage{draftwatermark}
+%
+%\SetWatermarkText{DRAFT}
+%\SetWatermarkScale{6}
+
+%---------------------------------
+% Commands
+%---------------------------------
+\newcommand{\HRule}{\rule{\linewidth}{0.2mm}}	% Horizontal line for title page
+\newcommand{\qto}[1]{\glqq #1\grqq}				% Anführungszeichen
+
+\newcommand{\urlMitUmlauten}[2]{\texttt{\href{#1}{#2}}}				% URL mit Umlauten
+
+% Abkürzungen (mit korrekten Abständen)
+\usepackage{xspace}
+\newcommand{\zB}{\mbox{z.\,B.}\xspace}
+\newcommand{\dH}{\mbox{d.\,h.}\xspace} % Kommando \dh ist schon definiert
+\newcommand{\ggf}{ggf.\xspace}
+\newcommand{\evtl}{evtl.\xspace}
+\newcommand{\bzw}{bzw.\xspace}
+
+
+%---------------------------------
+% Document start
+%---------------------------------
+\begin{document}
+	
+	%---------------------------------
+	% Titlepage
+	%---------------------------------
+	\begin{titlepage}
+		\shortdate % Use Short Date
+		\center % Center everything on the page
+		
+		~\\[1cm]
+		
+		%---------------------------------
+		% HEADER SECTIONS
+		%---------------------------------
+		
+		\begin{figure}[h!]
+			\centering
+			\resizebox{12cm}{!}{
+				\includegraphics[width=90mm,keepaspectratio]{../Images/HSBLogo.png}
+			}
+		\end{figure}
+		
+		\vspace{-0.5cm}
+		\textsc{\Large \MetaInstitute}\\[0.2cm] % Major heading such as course name
+		\textsc{\Large \MetaUnit}%[2.5cm] % Major heading such as course name
+		
+		\textsc{\large \MetaStudyProgram}\\[1.5cm]
+		
+		%---------------------------------
+		% DOCUMENT TYPE SECTION
+		%---------------------------------
+		\textsc{\LARGE \MetaTask}\\[1.5cm] % Minor heading such as course title
+		
+		%---------------------------------
+		% TITLE SECTION
+		%---------------------------------
+		%	\HRule \\[0.5cm]
+		%	{
+		%		\LARGE \bfseries \MetaTitle \\[0.50cm] % Title of your document
+		%		\par
+		%	}
+		%	\HRule \\[1.5cm]
+		\HRule \\[0.5cm]
+		{
+			\LARGE \bfseries \MetaTitle \\[0.50cm] % Title of your document
+			\LARGE \bfseries -- \MetaSubtitle\ -- \\[0.50cm] % Title of your document
+			\par
+		}
+		\HRule \\[1.5cm]
+		
+		%---------------------------------
+		% AUTHOR SECTION
+		%---------------------------------
+		\large 
+		\MetaAuthor\ (\MetaStudentNumber)\\
+		%\MetaCoAuthor\\[0.25cm]
+		
+		%---------------------------------
+		% DATE SECTION
+		%---------------------------------
+		\vspace*{\fill}
+		{
+			\large \MetaDate\ (Version \MetaVersion)
+		}
+	\end{titlepage}
+
+
+
+	%---------------------------------
+	% EINLEITUNG
+	%---------------------------------
+	\section{Einleitung}
+
+	In der Welt der Videospiele und erweiterten Realitätsanwendungen (XR) stellen die steigende Komplexität und die Anforderungen an die Treffererkennung eine Herausforderung dar. Traditionelle CPU-basierte Methoden stoßen zunehmend an ihre Grenzen, was die Systemperformance und die Spielerfahrung beeinträchtigt. Diese Arbeit erforscht die Möglichkeit, die Treffererkennung durch den Einsatz von Raytracing-Kernen auf GPUs zu realisieren, um die Präzision zu steigern und die CPU-Last zu verringern.
+	
+	\pagebreak
+	
+	%---------------------------------
+	% PROBLEMSTELLUNG UND LÖSUNGSANSATZ
+	%---------------------------------
+	\section{\label{sec:problem_loesung}Problemstellung und Lösungsansatz}
+
+	%---------------------------------
+	% PROBLEMSTELLUNG
+	%---------------------------------
+	\subsection{Problemstellung}
+	
+	Die Problematik der Treffererkennung in interaktiven Echtzeit-Umgebungen verschärft sich mit der zunehmenden Komplexität von Spielwelten und der fortlaufenden Entwicklung realistischerer 3D-Modelle. Die CPU ist in einer modernen Spiel-Engine oft mit mehreren Aufgaben belastet, einschließlich KI-Steuerung, Spiellogik und der Verwaltung von Benutzerinputs, wodurch die Ressourcen für die Treffererkennung limitiert sind. 
+	
+	Die traditionelle Hit-Scan-Methode, die auf der CPU ausgeführt wird, stößt bei der Skalierung auf Grenzen. Typischerweise werden Hitboxes in Form von Quadern, Sphären und Kapseln zur Vereinfachung des 3D-Modells verwendet. Der Strahl von seinem Startpunkt in die gegebene Richtung projiziert. Trifft der Strahl auf eine Hitbox, wird die Berechnung beendet und Trefferinformationen zurückgegeben. Alternativ kann das 3D-Modell selber als Hitbox fungieren, allerdings mit deutlich erhöhtem Rechenaufwand. 
+	
+	Dies führt zu einem Dilemma: Die Erhöhung der Präzision der Treffererkennung verlangt mehr Rechenzeit, was wiederum die Bildwiederholrate und damit die Immersion und Interaktion beeinträchtigen kann.
+
+	%\bigskip
+	%\noindent
+	
+	%%---------------------------------
+	%% LÖSUNGSANSATZ
+	%%---------------------------------
+	\subsection{Lösungsansatz}
+		
+	Im Rahmen der Arbeit wird das Hit-Scan-Verfahren auf die GPU verlagert, um die Rechenleistung der spezialisierten Raytracing-Kerne moderner Grafikkarten zu nutzen. Diese Anpassung zielt darauf ab, die Geschwindigkeit und Präzision der Treffererkennung zu steigern, während gleichzeitig die Belastung der CPU reduziert wird.
+	
+	Die Verlagerung des GPU-basierten Hit-Scan-Verfahrens soll mit der Vulkan-API, speziell Vulkan Ray Queries, realisiert werden. Ray Queries ermöglichen den Einsatz der Raytracing-Kerne außerhalb von Rendering-Shadern. Sie können für beliebige Zwecke benutzt werden. So auch für Treffererkennung.\footnote{\url{https://www.khronos.org/blog/ray-tracing-in-vulkan/\#blog\_Ray\_Queries}}
+	
+	Mehrere Testszenen mit variierender Anzahl von statischen 3D Modellen, bewegend und stehend, sollen der Evaluierung dienen: Durch Vergleichen der Performance des Verfahrens auf der GPU mit dem bestehenden CPU-basierten Ansatz in Unreal Engine 5\footnote{\url{https://www.unrealengine.com/en-US/unreal-engine-5}} wird überprüft, ob die GPU-Implementierung eine schnellere Verarbeitung ermöglicht. Dieser Vergleich soll die Vorteile der GPU-Nutzung für Echtzeit-Treffererkennung in interaktiven Anwendungen verdeutlichen. Der GPU-basierte Ansatz wird in einer zuvor eigens entwickelten Rendering-Engine verwirklicht.
+
+	\pagebreak
+	
+	\section{Literaturübersicht}
+	
+	Diese Übersicht an Literatur beschreibt Grundlagen und aktuellen Stand zu Raytracing, Echtzeit-Kollisionsdetektion, Vulkan sowie die Verwendung von Vulkan Ray Queries und Compute Shader. 
+	
+	\begin{itemize}
+	\item \textbf{RTX on—The NVIDIA Turing GPU}\cite{Burgess2020} John Burgess beschreibt die Architektur der NVIDIA Turing GPU und ihre neuen Features wie RT Cores und Tensor Cores, die speziell für Raytracing und Deep Learning entwickelt wurden. Der Artikel beleuchtet die technischen Details und die Leistungsfähigkeit dieser GPU-Generation.
+	
+	\item \textbf{Mastering Graphics Programming with Vulkan}\cite{Castorina2023} In diesem Buch von Marco Castorina wird die Programmierung von Grafikanwendungen mit Vulkan von Grund auf erläutert. Es behandelt zudem Ray Queries.
+	
+	\item \textbf{Introduction to Compute Shaders}\cite{Chajdas2018} Matthäus G. Chajdas bietet in diesem Artikel eine Einführung in Compute Shader. Er erklärt die Grundlagen, Anwendungsgebiete und die Implementierung von Compute Shadern.
+	
+	\item \textbf{Real-Time Collision Detection}\cite{Ericson2004} Christer Ericsons Buch ist ein umfassendes Werk zur Echtzeit-Kollisionserkennung. Es bietet theoretische Grundlagen und praktische Implementierungstechniken für effiziente Kollisionserkennung in Spielen und Simulationen.
+	
+	\item \textbf{NVIDIA TURING GPU ARCHITECTURE}\cite{Corporation2018} Dieses Whitepaper beschreibt die Turing GPU-Architektur, die erstmals Echtzeit-Raytracing in Hardware ermöglicht. Es werden die neuen RT Cores und Tensor Cores sowie ihre Anwendungen in Grafik und Deep Learning detailliert erläutert.
+	
+	\item \textbf{Ray Tracing Gems II}\cite{Marrs2021} Shirley et al. kompilierten eine Sammlung von Artikeln zur nächsten Generation des Raytracings mit DXR, Vulkan und OptiX. Behandelt werden fortschrittliche Techniken und Optimierungen für hochqualitatives und Echtzeit-Rendering sowie Grundlagen zu Raytracing
+	
+	\item \textbf{vk\_mini\_path\_tracer}\cite{Bickford} Neil Bickford beschreibt in seinem Tutorial detailliert eine Implementation eines Path-Tracers mithilfe von Vulkan Ray Queries.
+	\end{itemize}
+
+	
+	
+	\pagebreak
+	
+	%---------------------------------
+	% TOOLS
+	%---------------------------------
+	\section{Tools}
+
+	\medskip
+	\noindent
+	Hardware:
+	\begin{itemize}
+		\item CPU - AMD Ryzen 9 7900X
+		\item GPU - Nvidia RTX 4070
+	\end{itemize}
+	\medskip
+	\noindent
+	Implementationstools:
+	\begin{itemize}
+		\item Microsoft Visual Studio 2022 - C++ Entwicklungsumgebung
+		\begin{itemize}
+			\item Microsoft Visual C++ Compiler
+			\item C++ 20 Standard
+		\end{itemize}
+		\item NVIDIA Nsight Graphics - GPU-Debugging
+		\item Unreal Engine 5 - Game-Engine
+	\end{itemize}
+	
+	\medskip
+	\noindent
+	Software-Bibliotheken:
+	\begin{itemize}
+		\item Eigens erstelle Vulkan Rendering-Engine
+	\end{itemize}
+	
+	\medskip
+	\noindent
+	Versionsverwaltung:
+	\begin{itemize}
+		\item Git - Versionskontrollsoftware
+		\item Fork - Grafische Benutzeroberfläche für Git 
+	\end{itemize}
+	
+	\pagebreak
+	
+	%---------------------------------
+	% VORLÄUFIGE GLIEDERUNG
+	%---------------------------------
+	\section{\label{sec:gliederung}Vorläufige Gliederung}
+	
+	Nachfolgend die vorläufige Gliederung der Thesis. Es gilt zu beachten, dass vor allem die prototypische Realisierung sich radikal von der Planung unterscheiden kann.
+	
+	{\parindent=5mm 
+		Eigenständigkeitserklärung
+		
+		Abstract}
+	
+	\begin{gliederung}
+		\item Einleitung
+		\begin{gliederung}
+			\item Problemfeld
+			\item Ziele der Arbeit
+			\item Lösungsansatz
+			\item Aufbau der Arbeit
+		\end{gliederung}
+		
+		\item Grundlagen
+		\begin{gliederung}
+			\item 3D-Meshes
+			\begin{gliederung}
+				\item Static Meshes
+				\item Skeletal Meshes
+			\end{gliederung}
+			\item Kollisionserkennung/Treffererkennung % TODO: Welches?
+			\begin{gliederung}
+				\item Bounding-Boxes
+				\item Treffererkennungs-Algorithmus
+			\end{gliederung}
+			\item Raytracing
+			% TODO: Subkategorie von RT oder eigene? Lieber rausnehmen und in Konzept?
+			\begin{gliederung}
+				\item Hit-Scan Verfahren
+			\end{gliederung}
+			\item Hardware-Raytracing
+			\item Bounding Volume Hierarchies
+			\item GPU-Architektur
+			\begin{gliederung}
+				\item Scheduler
+				\item Compute Units
+				\item Pipeline
+			\end{gliederung}
+			\item GPU<->CPU Kommunikation
+			\begin{gliederung}
+				\item PCI-Express
+			\end{gliederung}
+			\item Render-Hardware-Interface
+			\begin{gliederung}
+				\item Vulkan
+				\begin{gliederung}
+					\item Pipeline
+					\item Queue
+					\item Commandbuffer
+					\item Meshbuffer
+					\item Compute Shader
+				\end{gliederung}
+			\end{gliederung}
+		\end{gliederung}
+		
+		\item Verwandte Arbeiten
+		
+		\item Konzeption
+		\begin{gliederung}
+			\item Hardware-Raytracing
+			\begin{gliederung}
+				\item 3D-Mesh Format
+				\item Mesh Collection
+				\item Bottom-Level Acceleration-Structure
+				\item Top-Level Acceleration Structure
+				\item Compute Shader
+				\item Performance Measuring
+				\item Testszenen
+			\end{gliederung}
+			\item Zusammenfassung
+		\end{gliederung}
+		
+		\item Prototypische Realisierung
+		\begin{gliederung}
+			\item Wahl der Realisierungsplattform
+			\item Festlegung des Realisierungsumfangs
+			\item Ausgewählte Realisierungsaspekte
+			\begin{gliederung}
+				\item Mesh Collection
+				\item Bottom-Level Acceleration-Structure
+				\item Top-Level Acceleration Structure
+				\item Compute Shader
+				\item Testszenen
+			\end{gliederung}
+			\item Qualitätssicherung
+			\item Zusammenfassung
+		\end{gliederung}
+		
+		\item Evaluation
+		\begin{gliederung}
+			\item Überprüfung funktionaler Anforderungen
+			\item Überprüfung nicht-funktionaler Anforderungen
+		\end{gliederung}
+		
+		\item Zusammenfassung und Ausblick
+		\begin{gliederung}
+			\item Zusammenfassung
+			\item Ausblick
+		\end{gliederung}
+		
+	\end{gliederung}
+	
+	{\parindent=5mm
+		Literaturverzeichnis}%\\[0.25cm]
+
+	%---------------------------------
+	% ZEITRAHMEN
+	%---------------------------------
+	\pagebreak
+	\section{Zeitplanung}
+	
+	Geplanter Starttermin: 
+	25. Juni 2024
+	
+	\noindent
+	Bearbeitungsdauer: 9 Wochen
+	
+	\noindent
+	\cref{tab:zeitplanung} stellt die geplanten Arbeitspakete und Meilensteine dar:
+	%
+	\begin{table}[H]		% 'H' option is provided by float package 
+		
+		\caption{Arbeitspakete und Meilensteine} \label{tab:zeitplanung} 
+		
+		\centering
+		\def\arraystretch{1.3}%  1 is the default, change whatever you need
+		%\setlength{\extrarowheight}{5pt}%
+		\begin{tabular}{|c|p{10cm}|c|}
+			
+			\hline 
+			%%%%%%
+			M1 & Offizieller Beginn der Arbeit & 25.06.2024  \\ 
+			\hline
+			& \tabitem Verfassen von Kapitel 1 (Einleitung) & 1 Woche \\ 
+			\hline
+			%%%%%%
+			M2 & Recherche \& Grundlagen & 02.07.2024  \\ 
+			\hline
+			& \tabitem Recherche (Hardware-)Raytracing & \multirowcell{5}{2 Wochen} \\ 
+			& \tabitem Recherche Treffererkennung & \\
+			& \tabitem Recherche Vulkan \& Compute Shader & \\
+			%\cline{2-2}
+			& \tabitem Verfassen von Kapitel 2 (Grundlagen) & \\ 
+			& \tabitem Verfassen von Kapitel 3 (Verwandte Arbeiten) & \\ 
+			\hline
+			%%%%%%
+			M3 & Konzeption & 16.07.2024  \\ 
+			\hline
+			& \tabitem Entwurf des Renderers und Raytracing-Shaders & \multirowcell{3}{2 Wochen} \\ 
+			& \tabitem Entwurf der Testszenen & \\
+			%\cline{2-2}
+			& \tabitem Verfassen von Kapitel 4 (Konzeption) & \\ 
+			\hline
+			%%%%%%
+			M4 & Implementation Prototyp & 30.07.2024 \\ 
+			\hline
+			& \tabitem IDE Einrichten & \multirowcell{5}{2 Wochen} \\ 
+			& \tabitem C++ Implementation & \\ 
+			& \tabitem Profiling & \\ 
+			& \tabitem Testszenenaufbau und Profiling & \\
+			%\cline{2-2}
+			& \tabitem Verfassen von Kapitel 5 (Prototypische Realisierung) & \\ 
+			\hline
+			%%%%%%
+			M5 & Evaluation & 13.08.2024 \\ 
+			\hline
+			& \tabitem Verfassen von Kapitel 6 (Evaluation) & \multirowcell{2}{1 Woche} \\ 
+			& \tabitem Verfassen von Kapitel 7 (Zusammenfassung \& Ausblick) & \\ 
+			\hline
+			M6 & Erste Fassung vollständige Thesis & 20.08.2024  \\ 
+			\hline
+			& \tabitem Korrekturlesen & \multirowcell{2}{1 Woche} \\ 
+			%\cline{2-2}
+			& \tabitem Drucken \& binden lassen & \\ 
+			\hline
+			%%%%%%
+			M7 & Abgabe der Thesis & 27.08.2024  \\ 
+			\hline
+			
+		\end{tabular} 
+	\end{table}
+	
+	
+	%---------------------------------
+	% LITERATUR
+	%---------------------------------
+	%\bibliographystyle{IEEEtran}
+	%\bibliography{IEEEabrv,literatur}
+	%\bibliographystyle{plain}
+	%\bibliography{literatur}
+	
+	
+	% Gesamte Literaturliste
+	%\printbibliography	
+	
+	% Literaturliste getrennt in Papier- und Online-Quellen:
+	\printbibheading
+	\printbibliography[nottype=online, heading=subbibliography, title={Gedruckte Quellen}]
+	\printbibliography[type=online, heading=subbibliography, title={Online-Quellen}]
+	
+	
+\end{document}
