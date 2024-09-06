@@ -1,1 +1,1 @@
-Abgabe/Projektdaten/ filter=lfs diff=lfs merge=lfs -text
+Abgabe/Projektdaten/** filter=lfs diff=lfs merge=lfs -text
